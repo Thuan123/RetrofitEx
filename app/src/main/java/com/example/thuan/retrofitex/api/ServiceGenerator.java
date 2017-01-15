@@ -11,7 +11,7 @@ import retrofit2.Retrofit;
  */
 
 public class ServiceGenerator {
-    public static final String API_BASE_URL = "https://stage.aromajoin.com:443/";
+    public static final String API_BASE_URL = "https://aromajoin.com/";
 
     private static HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
     private static Interceptor logging = interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);

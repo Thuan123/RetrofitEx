@@ -13,9 +13,15 @@ import android.widget.TextView;
 
 import com.example.thuan.retrofitex.api.AromaShooter;
 import com.example.thuan.retrofitex.api.ServiceGenerator;
+import com.example.thuan.retrofitex.model.request.AromaTimeline;
+import com.example.thuan.retrofitex.model.request.AromaTimelineRequest;
 import com.example.thuan.retrofitex.model.request.Session;
 import com.example.thuan.retrofitex.model.request.SessionRequest;
+import com.example.thuan.retrofitex.model.response.AromaTimelineResponse;
+import com.example.thuan.retrofitex.model.response.AromaVideo;
 import com.example.thuan.retrofitex.model.response.LoginResponse;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         String user = editText.getText().toString();
         progressBar.setVisibility(View.VISIBLE);
 
-        Session session = new Session("patuki@gmail.com", "123456789");
+        Session session = new Session("quangnguyen@aromajoin.com", "12345678");
         SessionRequest sessionRequest = new SessionRequest();
         sessionRequest.setSession(session);
         Call<LoginResponse> call = shooter.login(sessionRequest);
@@ -77,6 +83,57 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Response<LoginResponse> response) {
                 Log.e("res", response.toString());
+
+                String authen = response.body().getData().getAuthenticationToken();
+                int userId = response.body().getData().getId();
+
+                Log.e("authen", authen);
+                Log.e("userId", String.valueOf(userId));
+
+                /*AromaVideo aromaVideo = new AromaVideo("ABCD", null, "assets-library://asset/asset.mp4?id=77FE7443-9DD1-4FF0-AC06-049D0F3E5447&ext=mp4", null, 21.4785, null);
+                CreateAromaVideo createAromaVideo = new CreateAromaVideo(aromaVideo);
+                Call<CreateAromaVideoResponse> createAromaVideoResponseCall = shooter.createAromaVideo(authen, userId, createAromaVideo);
+                createAromaVideoResponseCall.enqueue(new Callback<CreateAromaVideoResponse>() {
+                    @Override
+                    public void onResponse(Response<CreateAromaVideoResponse> response) {
+                        Log.e("code", String.valueOf(response.code()));
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });*/
+
+                Call<List<AromaVideo>> resCall = shooter.getAllAromaVideo(authen, userId, true, "title");
+                resCall.enqueue(new Callback<List<AromaVideo>>() {
+                    @Override
+                    public void onResponse(Response<List<AromaVideo>> response) {
+                        Log.e("code", String.valueOf(response.code()));
+                        Log.e("size", String.valueOf(response.body().size()));
+                        Log.e("id", String.valueOf(response.body().get(0).getId()));
+                        Log.e("title", response.body().get(0).getTitle());
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });
+                AromaTimeline aromaTimeline = new AromaTimeline(1.0, null);
+                AromaTimelineRequest aromaTimelineRequest = new AromaTimelineRequest(aromaTimeline);
+                Call<AromaTimelineResponse> aromaTimelineResponseCall = shooter.createAromaTimeline(authen, userId, 1, aromaTimelineRequest);
+                aromaTimelineResponseCall.enqueue(new Callback<AromaTimelineResponse>() {
+                    @Override
+                    public void onResponse(Response<AromaTimelineResponse> response) {
+                        Log.e("code", String.valueOf(response.code()));
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.e("error", t.getMessage());
+                    }
+                });
                 progressBar.setVisibility(View.INVISIBLE);
             }
 
@@ -86,6 +143,18 @@ public class MainActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         });
+        /*Call<DestroyAromaTimeline> destroyAromaTimelineCall = shooter.destroyAromaTimle(authen, userId, 56, 147);
+                destroyAromaTimelineCall.enqueue(new Callback<DestroyAromaTimeline>() {
+                    @Override
+                    public void onResponse(Response<DestroyAromaTimeline> response) {
+                        Log.e("code", String.valueOf(response.code()));
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+
+                    }
+                });*/
         /*Call<SignUpRequest> call = shooter.createUser("testaccount@gmail.com", "123456789");
 
         call.enqueue(new Callback<SignUpRequest>() {
